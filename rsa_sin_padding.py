@@ -1,4 +1,3 @@
-from email import message
 import gmpy2
 import sys
 from cryptography.hazmat.backends import default_backend
@@ -38,15 +37,12 @@ def cifrar(input_file, output_file, input_key):
     input_data = open(input_file, 'rb').read()
     bytes_encryption = rsa_encrypt(message_to_int(input_data), serialization_key)
     # * cifrar el mensaje
-    # message_encryption = int_to_bytes(bytes_encryption)
+    message_encryption = int_to_bytes(bytes_encryption)
+    output = open(output_file, 'wb')
     # * guardar el texto cifrado
-    output = open(output_file, 'w')
-    # output.write(message_encryption)
-    print(str(bytes_encryption))
-    encry = str(bytes_encryption)
-    output.write(encry)
+    output.write(message_encryption)
     output.close()
-    # print(message_encryption)
+    print(message_encryption)
 
 def descifrar(input_file, output_file, input_key):
     key = open(input_key, 'rb').read()
@@ -55,9 +51,9 @@ def descifrar(input_file, output_file, input_key):
         backend=default_backend(),
         password=None
     )
-    input_data = int(open(input_file, 'rb').read())
-    # message_encryption = bytes_to_int(input_data)
-    message_decoded_bytes = rsa_decrypt(input_data, serialization_key)
+    input_data = open(input_file, 'rb').read()
+    message_encryption = bytes_to_int(input_data)
+    message_decoded_bytes = rsa_decrypt(message_encryption, serialization_key)
     print(message_decoded_bytes)
     message_decoded = int_to_bytes(message_decoded_bytes)
     # * guardar el texto descifrado
@@ -82,3 +78,12 @@ if __name__ == '__main__':
     input_key = sys.argv[3]
     operation_rsa = sys.argv[4]
     operation(operation_rsa)
+
+"""
+*
+python3 generate_keys_rsa.py private_key.pem public_key.pem
+^
+python3 RSA.py michi.txt michi.cif public_key.pem cifrar
+^
+python3 RSA.py michi.cif michi.des private_key.pem descifrar
+"""
